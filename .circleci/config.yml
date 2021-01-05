@@ -31,8 +31,49 @@ version: 2.1
 #             #  Add revert code here. You can find this in the Getting Started section.
 #               exit 1
 #             fi
+
+orbs:
+  slack: circleci/slack@4.2.0
             
 jobs:
+  notify:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Failed build",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Success build",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -120,7 +161,7 @@ jobs:
           command: |
              cd backend
              npm i
-             npm audit --audit-level=critical
+             npm audit fix --audit-level=critical --force
 
 #   deploy-infrastructure:
 #     docker:
