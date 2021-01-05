@@ -21,15 +21,15 @@ commands:
       - run:
           name: Revert migrations
           # Add when this will run
-          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            cd ~/project/backend
-            npm install
-            npm run migrations:revert
+            #  cd ~/project/backend
+            #  npm install
+            #  Add revert code here. You can find this in the Getting Started section.
+              exit 1
             fi
             
 jobs:
@@ -69,71 +69,35 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # Docker image here
     steps:
       # Checkout code from git
-      - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [frontend-build]
       # Your job code here
-      - run:
-          name: Test front-end
-          command: |
-              cd frontend
-              npm i
-              npm run test
                 
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      # Docker image here
     steps:
       # Checkout code from git
-      - checkout
       # Restore from cache
-      - restore_cache:
-        keys: [backend-build]
       # Your job code here
-      - run:
-          name: Test back-end
-          command: |
-              cd backend
-              npm i
-              npm run test
             
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # Docker image here
     steps:
       # Checkout code from git
-      - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [frontend-build]
       # Your job code here
-      - run:
-          name: Scan front-end
-          command: |
-              cd frontend
-              npm i
-              npm audit --audit-level=critical
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      # Docker image here
     steps:
       # Checkout code from git
-      - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [backend-build]
       # Your job code here
-      - run:
-          name: Scan back-end
-          command: |
-              cd backend
-              npm i
-              npm audit --audit-level=critical
 
   deploy-infrastructure:
     docker:
