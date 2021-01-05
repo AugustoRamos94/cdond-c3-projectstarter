@@ -36,44 +36,6 @@ orbs:
   slack: circleci/slack@4.2.0
             
 jobs:
-  notify:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - slack/notify:
-          event: fail
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "Failed build",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-      - slack/notify:
-          event: pass
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "Success build",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -90,6 +52,40 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Build frontend failed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Build frontend passed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
 
   build-backend:
     docker:
@@ -107,6 +103,40 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Build backend failed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Build backend passed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
 
   test-frontend:
     docker:
@@ -121,6 +151,40 @@ jobs:
             cd frontend
             npm i
             npm run test
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Test frontend failed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Test frontend passed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
                 
   test-backend:
     docker:
@@ -135,6 +199,40 @@ jobs:
              cd backend
              npm i
              npm run test
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Test backend failed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "Test backend passed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
             
   scan-frontend:
     docker:
