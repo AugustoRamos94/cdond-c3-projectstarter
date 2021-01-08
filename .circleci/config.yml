@@ -9,8 +9,7 @@ commands:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       workflow_id:
-        type: string 
-    executor: aws-cli/default
+        type: string
     steps:
       - run:
           name: Destroy environments
@@ -299,6 +298,7 @@ jobs:
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
+    executor: aws-cli/default
     steps:
       - checkout
       - add_ssh_keys:
