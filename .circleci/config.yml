@@ -9,10 +9,11 @@ commands:
     steps:
       - run:
           name: awscli install
+          when: on_fail
           command: |
-            sudo apt-get -y -qq update
-            sudo apt-get -y -qq install python3
-            sudo apt-get -qq install awscli
+            apt-get -y -qq update
+            apt-get -y -qq install python3
+            apt-get -qq install awscli
       - run:
           name: Destroy environments
           when: on_fail
