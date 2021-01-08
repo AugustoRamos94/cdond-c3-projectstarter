@@ -10,14 +10,8 @@ commands:
     parameters:
       workflow_id:
         type: string 
+    executor: aws-cli/default
     steps:
-      - run:
-          name: awscli install
-          when: on_fail
-          command: |
-            apt-get -y -qq update
-            apt-get -y -qq install python3
-            apt-get -qq install awscli
       - run:
           name: Destroy environments
           when: on_fail
@@ -338,8 +332,6 @@ jobs:
             
             cd ~/project/.circleci/ansible
             
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udapeople" --output text >> inventory.txt
-
             ansible-playbook -i inventory.txt configure-server.yml
 
             pwd
