@@ -315,6 +315,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             echo PWD $(pwd)
+            echo $TYPEORM_DATABASE
 
             touch ~/project/backend/.env
             #ls -la ~/project/backend
