@@ -315,7 +315,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             echo PWD $(pwd)
-            echo $TYPEORM_DATABASE
+            echo $TYPEORM_HOST
 
             touch ~/project/backend/.env
             #ls -la ~/project/backend
@@ -330,6 +330,8 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             echo NODE_ENV=development >> "backend/.env"
+
+            echo ~/project/backend/.env
             
             cd ~/project/.circleci/ansible
             
