@@ -8,6 +8,12 @@ commands:
         type: string 
     steps:
       - run:
+          name: awscli install
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get -y -qq install python3
+            sudo apt-get -qq install awscli
+      - run:
           name: Destroy environments
           when: on_fail
           command: |
@@ -310,37 +316,94 @@ jobs:
             apk add --update ansible
       - run:
           name: Configure server
+          no_output_timeout: 30m
           command: |
-            cd .circleci/ansible
+            echo PWD $(pwd)
+
+            touch ~/project/backend/.env
+            #ls -la ~/project/backend
+            echo ENVIRONMENT=production >> "backend/.env"
+            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            echo NODE_ENV=development >> "backend/.env"
+            
+            cd ~/project/.circleci/ansible
+            
+            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udapeople" --output text >> inventory.txt
+
             ansible-playbook -i inventory.txt configure-server.yml
+
+            pwd
+            cat ~/project/backend/.env
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
-      - image: amazon/aws-cli
+      - image: circleci/node:12.18.4
     steps:
       - checkout
+
+      - restore_cache:
+          keys: [backend-build]
+
+      - attach_workspace:
+          at: ~/project/
+
+      - run:
+          name: awscli install
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get -y -qq install python3
+            sudo apt-get -qq install awscli
+
       - run:
           name: Run migrations
           command: |
-            cd backend
+            cd backend 
             npm install
-            npm run migrations >> migrations_dump.txt
+            npm run build
+
+            echo 'DUMP MIGRATIONS'
+            echo "PWD: " $(pwd)
+            npm run migrations >> /home/circleci/project/backend/migrations_dump.txt
+
+            echo 'DISPLAY CONTENTS'
+            echo '*****************'
+            cat migrations_dump.txt
+            echo '-----------------'
+            #ls -la
+            #echo "running migrations!!!!!!"
+            #npm run migrations
+            #cat  /home/circleci/project/backend/migrations_dump.txt
+
       - run:
           name: Send migration results to memstash
           command: |
             cd backend
-            if grep -q "has been executed successfully." migrations_dump.txt
+            pwd
+            sudo cat ~/project/backend/migrations_dump.txt #/root/project/circleci/project/backend/migrations_dump.txt
+
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              curl -H "Content-Type: text/plain" -H "token: ce-${CIRCLE_WORKFLOW_ID}" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              echo migration_${CIRCLE_WORKFLOW_ID}
+              echo "SUCCESS = 1"
             else
-              echo $(curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
+              echo $(curl -H "Content-Type: text/plain" -H "token: ce-${CIRCLE_WORKFLOW_ID}" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID} | grep "No migrations")
+              echo "migration ID" migration_${CIRCLE_WORKFLOW_ID}
+              echo "FAIL = 0"
             fi
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+            workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations
 
   deploy-frontend:
