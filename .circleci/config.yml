@@ -416,6 +416,7 @@ jobs:
             yum -y install tar gzip
       - run:
           name: Get backend url and deploy frontend objects
+          no_output_timeout: 30m
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -449,6 +450,7 @@ jobs:
             pip install awscli
       - run:
           name: Deploy backend
+          no_output_timeout: 30m
           command: |
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
