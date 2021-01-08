@@ -357,8 +357,9 @@ jobs:
             --request PUT \
             --data "0" https://api.memstash.io/values/migration_status_${CIRCLE_WORKFLOW_ID}
             fi
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations
-      - destroy-environment 
 
   deploy-frontend:
     docker:
