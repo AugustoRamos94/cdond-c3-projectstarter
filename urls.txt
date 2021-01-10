@@ -1,5 +1,5 @@
 https://github.com/AugustoRamos94/cdond-c3-projectstarter(URL01)
-http://udapeople-43838f5.s3-website-us-west-2.amazonaws.com(URL02)
-drvfamyndut4n.cloudfront.net(URL03)
-ec2-52-88-6-217.us-west-2.compute.amazonaws.com(URL04)
+http://udapeople-fc1f4d9.s3-website-us-west-2.amazonaws.com(URL02)
+d2hiuj8d8jd3b9.cloudfront.net(URL03)
+ec2-54-149-15-205.us-west-2.compute.amazonaws.com(URL04)
 ec2-54-218-191-66.us-west-2.compute.amazonaws.com(URL05)
