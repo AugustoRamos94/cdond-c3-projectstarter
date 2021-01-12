@@ -26,8 +26,6 @@
   shell: |
     cd /home/ubuntu/backend
     npm run build
-    sudo cat .env
-    sudo npm run prestart:prod
     
 - name: Executing node
   become: true
